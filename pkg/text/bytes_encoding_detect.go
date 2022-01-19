@@ -2,7 +2,7 @@ package text
 
 import (
 	"fmt"
-	"golib/pkg/collection"
+	"github.com/zhaojunlucky/golib/pkg/collection"
 	"golang.org/x/text/encoding"
 	"log"
 	"os"

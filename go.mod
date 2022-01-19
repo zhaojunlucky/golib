@@ -1,4 +1,4 @@
-module golib
+module github.com/zhaojunlucky/golib
 
 go 1.17
 
