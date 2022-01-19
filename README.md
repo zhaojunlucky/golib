@@ -1,1 +1,1 @@
-# go-lib
+# golib
