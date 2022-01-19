@@ -1,1 +1,1 @@
-# go-text-enc
+# go-lib
