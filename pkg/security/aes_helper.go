@@ -7,16 +7,17 @@ import (
 )
 
 const (
-	IV_SIZE    = 16
-	NONCE_SIZE = 12
+	IvSize    = 16
+	NonceSize = 12
 )
 
 type AESHelper struct {
-	key []byte
+	key     []byte
+	TagSize int
 }
 
 func NewAESHelper(key []byte) *AESHelper {
-	return &AESHelper{key: key}
+	return &AESHelper{key: key, TagSize: 16}
 }
 
 func (aesHelper *AESHelper) encryptCBCRaw(data, iv []byte) ([]byte, []byte, error) {
@@ -33,11 +34,11 @@ func (aesHelper *AESHelper) encryptCBCRaw(data, iv []byte) ([]byte, []byte, erro
 	cipherText := make([]byte, len(padText))
 
 	if iv == nil {
-		iv, err = randomBytes(IV_SIZE)
+		iv, err = randomBytes(IvSize)
 		if err != nil {
 			return nil, nil, err
 		}
-	} else if len(iv) != IV_SIZE {
+	} else if len(iv) != IvSize {
 		return nil, nil, errors.New("invalid IV")
 	}
 
@@ -62,15 +63,19 @@ func (aesHelper *AESHelper) decryptCBC(encryptedData []byte) ([]byte, error) {
 		return nil, err
 	}
 
+	return aesHelper.decryptCBCRaw(data, iv)
+}
+
+func (aesHelper *AESHelper) decryptCBCRaw(encryptedData, iv []byte) ([]byte, error) {
 	block, err := aes.NewCipher(aesHelper.key)
 	if err != nil {
 		return nil, err
 	}
 
 	cbc := cipher.NewCBCDecrypter(block, iv)
-	cbc.CryptBlocks(data, data)
+	cbc.CryptBlocks(encryptedData, encryptedData)
 
-	cipherText, err := pkcs7Unpad(data, block.BlockSize())
+	cipherText, err := pkcs7Unpad(encryptedData, block.BlockSize())
 	if err != nil {
 		return nil, err
 	}
@@ -84,17 +89,11 @@ func (aesHelper *AESHelper) encryptGCMRaw(data, nonce []byte) ([]byte, []byte, e
 		return nil, nil, err
 	}
 
-	if nonce == nil {
-		nonce, err = randomBytes(NONCE_SIZE)
-
-		if err != nil {
-			return nil, nil, err
-		}
-	} else if len(nonce) != NONCE_SIZE {
+	if len(nonce) != NonceSize {
 		return nil, nil, errors.New("invalid nonce")
 	}
 
-	gcm, err := cipher.NewGCM(block)
+	gcm, err := cipher.NewGCMWithTagSize(block, aesHelper.TagSize)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -104,7 +103,13 @@ func (aesHelper *AESHelper) encryptGCMRaw(data, nonce []byte) ([]byte, []byte, e
 	return cipherText, nonce, nil
 }
 
-func (aesHelper *AESHelper) encryptGCM(data, nonce []byte) ([]byte, error) {
+func (aesHelper *AESHelper) encryptGCM(data []byte) ([]byte, error) {
+	nonce, err := randomBytes(NonceSize)
+
+	if err != nil {
+		return nil, err
+	}
+
 	encryptedData, nonce, err := aesHelper.encryptGCMRaw(data, nonce)
 	if err != nil {
 		return nil, err
@@ -124,15 +129,15 @@ func (aesHelper *AESHelper) decryptGCM(encryptedData []byte) ([]byte, error) {
 		return nil, err
 	}
 
-	gcm, err := cipher.NewGCM(block)
+	gcm, err := cipher.NewGCMWithTagSize(block, aesHelper.TagSize)
 	if err != nil {
 		return nil, err
 	}
 
-	cipherText, err := gcm.Open(nil, nonce, data, nil)
+	data, err = gcm.Open(nil, nonce, data, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	return cipherText, nil
+	return data, nil
 }
