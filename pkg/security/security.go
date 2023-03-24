@@ -7,14 +7,14 @@ import (
 )
 
 type AES interface {
-	encryptCBCRaw(data, iv []byte) ([]byte, []byte, error)
-	encryptCBC(data, iv []byte) ([]byte, error)
-	decryptCBC(encryptedData []byte) ([]byte, error)
-	decryptCBCRaw(encryptedData, iv []byte) ([]byte, error)
+	EncryptCBCRaw(data, iv []byte) ([]byte, []byte, error)
+	EncryptCBC(data, iv []byte) ([]byte, error)
+	DecryptCBC(encryptedData []byte) ([]byte, error)
+	DecryptCBCRaw(encryptedData, iv []byte) ([]byte, error)
 
-	encryptGCMRaw(data, nonce []byte) ([]byte, []byte, error)
-	encryptGCM(data, nonce []byte) ([]byte, error)
-	decryptGCM(encryptedData []byte) ([]byte, error)
+	EncryptGCMRaw(data, nonce []byte) ([]byte, []byte, error)
+	EncryptGCM(data, nonce []byte) ([]byte, error)
+	DecryptGCM(encryptedData []byte) ([]byte, error)
 }
 
 func packDataAndKey(data, key []byte) ([]byte, error) {
