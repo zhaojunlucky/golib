@@ -2,6 +2,7 @@ package security
 
 import (
 	"bytes"
+	"crypto/ecdsa"
 	"crypto/rand"
 	"encoding/binary"
 )
@@ -15,6 +16,11 @@ type AES interface {
 	EncryptGCMRaw(data, nonce []byte) ([]byte, []byte, error)
 	EncryptGCM(data, nonce []byte) ([]byte, error)
 	DecryptGCM(encryptedData []byte) ([]byte, error)
+}
+
+type ECIES interface {
+	EncryptWithPublic(key *ecdsa.PublicKey, data []byte) ([]byte, error)
+	DecryptWithPrivate(key *ecdsa.PrivateKey, data []byte) ([]byte, error)
 }
 
 func packDataAndKey(data, key []byte) ([]byte, error) {

@@ -10,13 +10,13 @@ import (
 func TestCBC(t *testing.T) {
 	aesHelper := NewAESHelper([]byte("passwordpassword"))
 	data := []byte("hello world")
-	encryptedData, err := aesHelper.encryptCBC(data, nil)
+	encryptedData, err := aesHelper.EncryptCBC(data, nil)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
 	fmt.Printf("encrypted: %s\n", hex.EncodeToString(encryptedData))
 
-	text, err := aesHelper.decryptCBC(encryptedData)
+	text, err := aesHelper.DecryptCBC(encryptedData)
 
 	if err != nil {
 		t.Fatalf(err.Error())
@@ -32,12 +32,12 @@ func TestGCM(t *testing.T) {
 	key, _ := hex.DecodeString("24cd27f296351a934855f099c091dc777a8fac258f1fdb7531cd71d7d05f48e0")
 	aesHelper := NewAESHelper(key)
 	data := []byte("hello world!!!")
-	encryptedData, err := aesHelper.encryptGCM(data)
+	encryptedData, err := aesHelper.EncryptGCM(data)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
 
-	text, err := aesHelper.decryptGCM(encryptedData)
+	text, err := aesHelper.DecryptGCM(encryptedData)
 
 	if err != nil {
 		t.Fatalf(err.Error())
@@ -55,7 +55,7 @@ func TestGCMKey(t *testing.T) {
 	nonce, _ := hex.DecodeString("ef498a20cd1e4c8fc4712ac3")
 	aesHelper := NewAESHelper(key)
 
-	encryptedData, newNonce, err := aesHelper.encryptGCMRaw(data, nonce)
+	encryptedData, newNonce, err := aesHelper.EncryptGCMRaw(data, nonce)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -71,7 +71,7 @@ func TestGCMKey(t *testing.T) {
 		t.Fatalf("GCM encrypt decrypt failed")
 	}
 
-	text, err := aesHelper.decryptGCM(encryptedData)
+	text, err := aesHelper.DecryptGCM(encryptedData)
 
 	if err != nil {
 		t.Fatalf(err.Error())
