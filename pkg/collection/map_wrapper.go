@@ -94,6 +94,18 @@ func (m *MapWrapper) GetMap(key string) (map[string]any, error) {
 	return mapVal, nil
 }
 
+func (m *MapWrapper) GetStringMap(key string) (map[string]string, error) {
+	val, ok := m.data[key]
+	if !ok {
+		return nil, fmt.Errorf("key %s not found in map", key)
+	}
+	mapVal, ok := val.(map[string]string)
+	if !ok {
+		return nil, fmt.Errorf("key %s is not a map", key)
+	}
+	return mapVal, nil
+}
+
 func (m *MapWrapper) GetMapWrapper(key string) (mapWrapper *MapWrapper, err error) {
 	var data map[string]any
 	data, err = m.GetMap(key)
