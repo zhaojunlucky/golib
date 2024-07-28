@@ -45,6 +45,19 @@ func (m *MapWrapper) GetString(key string) (string, error) {
 	return strVal, nil
 }
 
+func (m *MapWrapper) GetBool(key string) (bool, error) {
+	val, ok := m.data[key]
+	if !ok {
+		return false, fmt.Errorf("key %s not found in map", key)
+	}
+	boolVal, ok := val.(bool)
+	if !ok {
+		return false, fmt.Errorf("key %s is not a bool", key)
+	}
+
+	return boolVal, nil
+}
+
 func (m *MapWrapper) GetList(key string) ([]any, error) {
 	val, ok := m.data[key]
 	if !ok {
@@ -67,6 +80,17 @@ func (m *MapWrapper) GetMap(key string) (map[string]any, error) {
 		return nil, fmt.Errorf("key %s is not a map", key)
 	}
 	return mapVal, nil
+}
+
+func (m *MapWrapper) GetMapWrapper(key string) (mapWrapper *MapWrapper, err error) {
+	var data map[string]any
+	data, err = m.GetMap(key)
+	if err != nil {
+		return
+	}
+
+	mapWrapper = NewMapWrapper(data)
+	return
 }
 
 func NewMapWrapper(data map[string]any) *MapWrapper {
