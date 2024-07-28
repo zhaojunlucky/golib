@@ -58,12 +58,24 @@ func (m *MapWrapper) GetBool(key string) (bool, error) {
 	return boolVal, nil
 }
 
-func (m *MapWrapper) GetList(key string) ([]any, error) {
+func (m *MapWrapper) GetSlice(key string) ([]any, error) {
 	val, ok := m.data[key]
 	if !ok {
 		return nil, fmt.Errorf("key %s not found in map", key)
 	}
 	listVal, ok := val.([]any)
+	if !ok {
+		return nil, fmt.Errorf("key %s is not a list", key)
+	}
+	return listVal, nil
+}
+
+func (m *MapWrapper) GetStringSlice(key string) ([]string, error) {
+	val, ok := m.data[key]
+	if !ok {
+		return nil, fmt.Errorf("key %s not found in map", key)
+	}
+	listVal, ok := val.([]string)
 	if !ok {
 		return nil, fmt.Errorf("key %s is not a list", key)
 	}
