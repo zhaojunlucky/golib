@@ -31,3 +31,13 @@ func GetObjAsSlice[T any](val any) ([]T, error) {
 		return tArr, nil
 	}
 }
+
+func GetObjAsMap[T any](val any) (map[string]T, error) {
+	t, ok := val.(map[string]T)
+	if !ok {
+		log.Infof("unable to convert %v to type %T", val, t)
+		return nil, fmt.Errorf("unable to convert %v to type %T", val, t)
+	} else {
+		return t, nil
+	}
+}
