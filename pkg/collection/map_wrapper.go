@@ -14,6 +14,15 @@ func (m *MapWrapper) Has(key string) bool {
 	return ok
 }
 
+func (m *MapWrapper) GetAny(key string) (any, error) {
+	mapObj, ok := m.data[key]
+	if !ok {
+		return nil, fmt.Errorf("key %s not found in map", key)
+	}
+	return mapObj, nil
+
+}
+
 func (m *MapWrapper) Get(key string, val any) error {
 	mapObj, ok := m.data[key]
 	if !ok {
