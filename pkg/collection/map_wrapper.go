@@ -146,3 +146,13 @@ func NewMapWrapper(data map[string]any) *MapWrapper {
 		data: data,
 	}
 }
+
+func NewMapWrapperAny(data any) (*MapWrapper, error) {
+	dataMap, ok := data.(map[string]any)
+	if !ok {
+		return nil, fmt.Errorf("data is not a map[string]any")
+	}
+	return &MapWrapper{
+		data: dataMap,
+	}, nil
+}
