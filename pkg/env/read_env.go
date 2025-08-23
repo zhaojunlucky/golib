@@ -8,7 +8,7 @@ import (
 var OSEnv = NewOSEnv()
 
 type ReadEnv struct {
-	Parent *Env
+	Parent Env
 	envs   map[string]string
 }
 
@@ -39,24 +39,20 @@ func (env *ReadEnv) Get(key string) string {
 }
 
 func (env *ReadEnv) GetAll() map[string]string {
-	envs := make(map[string]string)
+	newEnv := make(map[string]string)
 
 	for key, value := range env.envs {
-		envs[key] = value
+		newEnv[key] = value
 	}
-	for _, envStr := range os.Environ() {
-		key, value, found := strings.Cut(envStr, "=")
-		if !found {
-			continue
-		}
-
-		if _, ok := env.envs[key]; !ok {
-			envs[key] = value
+	if env.Parent != nil {
+		for key, value := range env.Parent.GetAll() {
+			if _, ok := newEnv[key]; ok {
+				continue
+			}
+			newEnv[key] = value
 		}
 	}
-
-	return envs
-
+	return newEnv
 }
 
 func (env *ReadEnv) Set(key, value string) {

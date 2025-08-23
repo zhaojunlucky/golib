@@ -2,7 +2,6 @@ package env
 
 import (
 	"os"
-	"strings"
 )
 
 type ReadWriteEnv struct {
@@ -28,7 +27,7 @@ func (env *ReadWriteEnv) Get(key string) string {
 	if val, ok := env.envs[key]; ok {
 		return val
 	}
-	return os.Getenv(key)
+	return env.Parent.Get(key)
 }
 
 func (env *ReadWriteEnv) Set(key, value string) {
@@ -47,13 +46,11 @@ func (env *ReadWriteEnv) GetAll() map[string]string {
 	for key, value := range env.envs {
 		envs[key] = value
 	}
-	for _, envStr := range os.Environ() {
-		key, value, found := strings.Cut(envStr, "=")
-		if !found {
-			continue
-		}
-
-		if _, ok := env.envs[key]; !ok {
+	if env.Parent != nil {
+		for key, value := range env.Parent.GetAll() {
+			if _, ok := envs[key]; ok {
+				continue
+			}
 			envs[key] = value
 		}
 	}
