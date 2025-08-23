@@ -21,6 +21,22 @@ func NewOSEnv() Env {
 	return &env
 }
 
+func NewReadEnv(parent Env, envs map[string]string) *ReadEnv {
+	if parent == nil {
+		parent = OSEnv
+	}
+	env := &ReadEnv{
+		Parent: parent,
+		envs:   make(map[string]string, max(16, len(envs))),
+	}
+
+	for k, v := range envs {
+		env.envs[k] = env.Expand(v)
+	}
+
+	return env
+}
+
 func (env *ReadEnv) initOSEnv() {
 	for _, envStr := range os.Environ() {
 		sepIndex := strings.Index(envStr, "=")
