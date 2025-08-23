@@ -23,6 +23,13 @@ func NewReadWriteEnv(parent Env, envs map[string]string) *ReadWriteEnv {
 	return env
 }
 
+func NewEmptyRWEnv() Env {
+	return &ReadWriteEnv{
+		Parent: nil,
+		envs:   make(map[string]string),
+	}
+}
+
 func (env *ReadWriteEnv) Get(key string) string {
 	if val, ok := env.envs[key]; ok {
 		return val

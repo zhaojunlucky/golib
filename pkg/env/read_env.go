@@ -21,6 +21,13 @@ func NewOSEnv() Env {
 	return &env
 }
 
+func NewEmptyReadEnv() Env {
+	return &ReadEnv{
+		Parent: nil,
+		envs:   make(map[string]string),
+	}
+}
+
 func NewReadEnv(parent Env, envs map[string]string) *ReadEnv {
 	if parent == nil {
 		parent = OSEnv
