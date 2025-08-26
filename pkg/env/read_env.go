@@ -61,6 +61,14 @@ func (env *ReadEnv) Get(key string) string {
 	return os.Getenv(key)
 }
 
+func (env *ReadEnv) Contains(key string) bool {
+	if _, ok := env.envs[key]; ok {
+		return true
+	}
+	_, exists := os.LookupEnv(key)
+	return exists
+}
+
 func (env *ReadEnv) GetAll() map[string]string {
 	newEnv := make(map[string]string)
 

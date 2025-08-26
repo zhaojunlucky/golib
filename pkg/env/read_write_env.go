@@ -37,6 +37,14 @@ func (env *ReadWriteEnv) Get(key string) string {
 	return env.Parent.Get(key)
 }
 
+func (env *ReadWriteEnv) Contains(key string) bool {
+	if _, ok := env.envs[key]; ok {
+		return true
+	}
+	_, exists := os.LookupEnv(key)
+	return exists
+}
+
 func (env *ReadWriteEnv) Set(key, value string) {
 	env.envs[key] = env.Expand(value)
 }

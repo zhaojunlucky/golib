@@ -8,4 +8,5 @@ type Env interface {
 	GetAll() map[string]string
 
 	Expand(s string) string
+	Contains(s string) bool
 }
