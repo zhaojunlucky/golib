@@ -2,10 +2,11 @@ package text
 
 import (
 	"fmt"
-	"github.com/zhaojunlucky/golib/pkg/collection"
-	"golang.org/x/text/encoding"
 	"log"
 	"os"
+
+	"github.com/zhaojunlucky/golib/pkg/collection"
+	"golang.org/x/text/encoding"
 )
 
 type BytesEncodingDetect struct {

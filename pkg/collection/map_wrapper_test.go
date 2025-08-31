@@ -2,8 +2,9 @@ package collection
 
 import (
 	"fmt"
-	"gopkg.in/yaml.v3"
 	"testing"
+
+	"gopkg.in/yaml.v3"
 )
 
 func TestMapWrapper_GetMap(t *testing.T) {

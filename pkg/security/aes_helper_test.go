@@ -12,18 +12,18 @@ func TestCBC(t *testing.T) {
 	data := []byte("hello world")
 	encryptedData, err := aesHelper.EncryptCBC(data, nil)
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	fmt.Printf("encrypted: %s\n", hex.EncodeToString(encryptedData))
 
 	text, err := aesHelper.DecryptCBC(encryptedData)
 
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 
 	if !reflect.DeepEqual(data, text) {
-		t.Fatalf("CBC encrypt decrypt failed")
+		t.Fatal("CBC encrypt decrypt failed")
 	}
 
 }
@@ -34,13 +34,13 @@ func TestGCM(t *testing.T) {
 	data := []byte("hello world!!!")
 	encryptedData, err := aesHelper.EncryptGCM(data)
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 
 	text, err := aesHelper.DecryptGCM(encryptedData)
 
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	fmt.Printf("encrypted: %s\n", hex.EncodeToString(encryptedData))
 	if !reflect.DeepEqual(data, text) {
@@ -57,27 +57,27 @@ func TestGCMKey(t *testing.T) {
 
 	encryptedData, newNonce, err := aesHelper.EncryptGCMRaw(data, nonce)
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	fmt.Println(hex.EncodeToString(encryptedData))
 
 	if hex.EncodeToString(encryptedData) != "5a0033306a6b97431624d8d9d7733bee8efb6ca189ac7dba25409a536e88" {
-		t.Fatalf("GCM encrypted failed")
+		t.Fatal("GCM encrypted failed")
 	}
 
 	encryptedData, _ = packDataAndKey(encryptedData, nonce)
 
 	if !reflect.DeepEqual(newNonce, nonce) {
-		t.Fatalf("GCM encrypt decrypt failed")
+		t.Fatal("GCM encrypt decrypt failed")
 	}
 
 	text, err := aesHelper.DecryptGCM(encryptedData)
 
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	if !reflect.DeepEqual(data, text) {
-		t.Fatalf("GCM encrypt decrypt failed")
+		t.Fatal("GCM encrypt decrypt failed")
 	}
 
 }
