@@ -34,15 +34,20 @@ func (env *ReadWriteEnv) Get(key string) string {
 	if val, ok := env.envs[key]; ok {
 		return val
 	}
-	return env.Parent.Get(key)
+	if env.Parent != nil {
+		return env.Parent.Get(key)
+	}
+	return ""
 }
 
 func (env *ReadWriteEnv) Contains(key string) bool {
 	if _, ok := env.envs[key]; ok {
 		return true
 	}
-	_, exists := os.LookupEnv(key)
-	return exists
+	if env.Parent != nil {
+		return env.Parent.Contains(key)
+	}
+	return false
 }
 
 func (env *ReadWriteEnv) Set(key, value string) {
@@ -58,16 +63,14 @@ func (env *ReadWriteEnv) SetAll(envs map[string]string) {
 func (env *ReadWriteEnv) GetAll() map[string]string {
 	envs := make(map[string]string)
 
-	for key, value := range env.envs {
-		envs[key] = value
-	}
 	if env.Parent != nil {
 		for key, value := range env.Parent.GetAll() {
-			if _, ok := envs[key]; ok {
-				continue
-			}
 			envs[key] = value
 		}
+	}
+
+	for key, value := range env.envs {
+		envs[key] = value
 	}
 
 	return envs

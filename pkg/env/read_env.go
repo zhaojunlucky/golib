@@ -58,30 +58,33 @@ func (env *ReadEnv) Get(key string) string {
 	if val, ok := env.envs[key]; ok {
 		return val
 	}
-	return os.Getenv(key)
+	if env.Parent != nil {
+		return env.Parent.Get(key)
+	}
+	return ""
 }
 
 func (env *ReadEnv) Contains(key string) bool {
 	if _, ok := env.envs[key]; ok {
 		return true
 	}
-	_, exists := os.LookupEnv(key)
-	return exists
+	if env.Parent != nil {
+		return env.Parent.Contains(key)
+	}
+	return false
 }
 
 func (env *ReadEnv) GetAll() map[string]string {
 	newEnv := make(map[string]string)
 
-	for key, value := range env.envs {
-		newEnv[key] = value
-	}
 	if env.Parent != nil {
 		for key, value := range env.Parent.GetAll() {
-			if _, ok := newEnv[key]; ok {
-				continue
-			}
 			newEnv[key] = value
 		}
+	}
+
+	for key, value := range env.envs {
+		newEnv[key] = value
 	}
 	return newEnv
 }
