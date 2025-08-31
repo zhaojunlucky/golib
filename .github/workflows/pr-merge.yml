@@ -25,7 +25,7 @@ jobs:
       - name: release
         env:
           TAG_BASE: "v1.0"
-          TAG: ${TAG_BASE}.${{ github.event.pull_request.number }}
+          PR_NUM: ${{ github.event.pull_request.number }}
         run: |
           git tag "$TAG"
-          git push origin "$TAG"
+          git push origin "${TAG_BASE}.${PR_NUM}"
