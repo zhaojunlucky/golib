@@ -440,71 +440,6 @@ func (detect *BytesEncodingDetect) big5_probability(rawtext []int) int {
 }
 
 /*
- * Function: big5plus_probability Argument: pointer to unsigned char array
- * Returns : number from 0 to 100 representing probability text in array
- * uses Big5+ encoding
- */
-func (detect *BytesEncodingDetect) big5plus_probability(rawtext []int) int {
-	var i, rawtextlen int
-	var dbchars = 1
-	var bfchars = 1
-	var bffreq int64 = 0
-	var totalfreq int64 = 1
-	var rangeval float32 = 0
-	var freqval float32 = 0
-	var row, column int
-	// Stage 1: Check to see if characters fit into acceptable ranges
-	rawtextlen = len(rawtext)
-	for i = 0; i < rawtextlen-1; i++ {
-		// System.err.println(rawtext[i]);
-		if rawtext[i] >= 128 {
-			// asciichars++;
-		} else {
-			dbchars++
-			if 0xA1 <= rawtext[i] && rawtext[i] <= 0xF9 && // Original Big5 range
-				((0x40 <= rawtext[i+1] && rawtext[i+1] <= 0x7E) || (0xA1 <= rawtext[i+1] && rawtext[i+1] <= 0xFE)) {
-				bfchars++
-				totalfreq += 500
-				row = rawtext[i] - 0xA1
-				if 0x40 <= rawtext[i+1] && rawtext[i+1] <= 0x7E {
-					column = rawtext[i+1] - 0x40
-				} else {
-					column = rawtext[i+1] - 0x61
-				}
-				// System.out.println("original row " + row + " column " +
-				// column);
-				if detect.Big5Freq[row][column] != 0 {
-					bffreq += int64(detect.Big5Freq[row][column])
-				} else if 3 <= row && row < 37 {
-					bffreq += 200
-				}
-			} else if 0x81 <= rawtext[i] && rawtext[i] <= 0xFE && // Extended Big5 range
-				((0x40 <= rawtext[i+1] && rawtext[i+1] <= 0x7E) || (0x80 <= rawtext[i+1] && rawtext[i+1] <= 0xFE)) {
-				bfchars++
-				totalfreq += 500
-				row = rawtext[i] - 0x81
-				if 0x40 <= rawtext[i+1] && rawtext[i+1] <= 0x7E {
-					column = rawtext[i+1] - 0x40
-				} else {
-					column = rawtext[i+1] - 0x40
-				}
-				// System.out.println("extended row " + row + " column " +
-				// column + " rawtext[i] " + rawtext[i]);
-				if detect.Big5PFreq[row][column] != 0 {
-					bffreq += int64(detect.Big5PFreq[row][column])
-				}
-			}
-			i++
-		}
-	}
-	rangeval = 50 * float32(float64(bfchars)/float64(dbchars))
-	freqval = 50 * float32(float64(bffreq)/float64(totalfreq))
-	// For regular Big5 files, this would give the same score, so I handicap
-	// it slightly
-	return (int)(rangeval+freqval) - 1
-}
-
-/*
  * Function: euc_tw_probability Argument: byte array Returns : number from 0
  * to 100 representing probability text in array uses EUC-TW (CNS 11643)
  * encoding
@@ -526,7 +461,7 @@ func (detect *BytesEncodingDetect) euc_tw_probability(rawtext []int) int {
 			// asciichars++;
 		} else { // high bit set
 			dbchars++
-			if i+3 < rawtextlen && (0x8E-256) == rawtext[i] && (0xA1-256) <= rawtext[i+1] && rawtext[i+1] <= (0xB0-256) && (0xA1-256) <= rawtext[i+2] && rawtext[i+2] <= (0xFE-256) && (0xA1-256) <= rawtext[i+3] && rawtext[i+3] <= (0xFE-256) { // Planes 1 - 16
+			if i+3 < rawtextlen && rawtext[i] == (0x8E-256) && (0xA1-256) <= rawtext[i+1] && rawtext[i+1] <= (0xB0-256) && (0xA1-256) <= rawtext[i+2] && rawtext[i+2] <= (0xFE-256) && (0xA1-256) <= rawtext[i+3] && rawtext[i+3] <= (0xFE-256) { // Planes 1 - 16
 				cnschars++
 				// System.out.println("plane 2 or above CNS char");
 				// These are all less frequent chars so just ignore freq
@@ -679,8 +614,8 @@ func (detect *BytesEncodingDetect) utf16_probability(rawtext []int) int {
 	// int score = 0;
 	// int i, rawtextlen = 0;
 	// int goodbytes = 0, asciibytes = 0;
-	if len(rawtext) > 1 && ((0xFE-256) == rawtext[0] && (0xFF-256) == rawtext[1]) || // Big-endian
-		((0xFF-256) == rawtext[0] && (0xFE-256) == rawtext[1]) { // Little-endian
+	if len(rawtext) > 1 && (rawtext[0] == (0xFE-256) && rawtext[1] == (0xFF-256)) || // Big-endian
+		(rawtext[0] == (0xFF-256) && rawtext[1] == (0xFE-256)) { // Little-endian
 		return 100
 	}
 	return 0

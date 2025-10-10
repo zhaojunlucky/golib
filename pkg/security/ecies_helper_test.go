@@ -27,7 +27,7 @@ func TestAESHelper_EncryptWithPrivate(t *testing.T) {
 	}
 	fmt.Printf("encrypted data: %s\n", hex.EncodeToString(encrypted))
 
-	decrypted, err := ecies.DecryptWithPrivate(priKey, encrypted)
+	decrypted, _ := ecies.DecryptWithPrivate(priKey, encrypted)
 	decryptedText := string(decrypted)
 	if message != decryptedText {
 		t.Fatal("failed to verify encryption and decryption")
