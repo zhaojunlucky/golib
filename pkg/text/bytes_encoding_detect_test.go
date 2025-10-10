@@ -3,17 +3,18 @@ package text
 import (
 	"bytes"
 	"fmt"
+	"io"
+	"testing"
+
 	"golang.org/x/text/encoding"
 	"golang.org/x/text/encoding/simplifiedchinese"
 	"golang.org/x/text/encoding/traditionalchinese"
 	"golang.org/x/text/transform"
-	"io/ioutil"
-	"testing"
 )
 
 func Utf8ToEnc(str string, enc encoding.Encoding) []byte {
 	r := transform.NewReader(bytes.NewReader([]byte(str)), enc.NewEncoder())
-	b, _ := ioutil.ReadAll(r)
+	b, _ := io.ReadAll(r)
 	return b
 }
 
