@@ -25,9 +25,9 @@ func TestGetCfgPath(t *testing.T) {
 
 	// Expected paths
 	expectedPaths := []string{
-		filepath.Join("/etc", appName, cfgFile),
-		filepath.Join(homeDir, ".config", appName, cfgFile),
 		filepath.Join(curDir, cfgFile),
+		filepath.Join(homeDir, ".config", appName, cfgFile),
+		filepath.Join("/etc", appName, cfgFile),
 	}
 
 	// Verify the number of paths
@@ -79,14 +79,14 @@ func TestGetCfgPathWithDifferentInputs(t *testing.T) {
 				t.Errorf("expected 3 paths, got %d", len(cfgPaths))
 			}
 
-			// Verify first path starts with /etc
-			if !filepath.IsAbs(cfgPaths[0]) || cfgPaths[0][:4] != "/etc" {
-				t.Errorf("first path should start with /etc, got %s", cfgPaths[0])
+			// Verify last path starts with /etc
+			if !filepath.IsAbs(cfgPaths[2]) || cfgPaths[2][:4] != "/etc" {
+				t.Errorf("last path should start with /etc, got %s", cfgPaths[2])
 			}
 
 			// Verify paths contain the app name and config file
 			for i, path := range cfgPaths {
-				if i < 2 { // First two paths should contain appName
+				if i > 0 { // Last two paths should contain appName
 					if filepath.Base(filepath.Dir(path)) != tc.appName && filepath.Base(filepath.Dir(filepath.Dir(path))) != tc.appName {
 						t.Errorf("path %d should contain app name %s, got %s", i, tc.appName, path)
 					}

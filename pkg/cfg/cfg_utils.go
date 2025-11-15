@@ -17,9 +17,9 @@ func GetCfgPath(appName string, cfgFile string) []string {
 		log.Fatalf("failed to get current dir: %v", err)
 	}
 	var cfgPaths []string = []string{
-		filepath.Join("/etc", appName, cfgFile),
-		filepath.Join(homeDir, ".config", appName, cfgFile),
 		filepath.Join(curDir, cfgFile),
+		filepath.Join(homeDir, ".config", appName, cfgFile),
+		filepath.Join("/etc", appName, cfgFile),
 	}
 
 	return cfgPaths
