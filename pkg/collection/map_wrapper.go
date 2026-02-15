@@ -36,8 +36,7 @@ func (m *MapWrapper) GetType(key string) (*reflect.Value, error) {
 	if !ok {
 		return nil, fmt.Errorf("key %s not found in map", key)
 	}
-	v := reflect.ValueOf(mapObj)
-	return &v, nil
+	return new(reflect.ValueOf(mapObj)), nil
 }
 
 func (m *MapWrapper) Get(key string, val any) error {
