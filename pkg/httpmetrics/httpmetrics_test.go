@@ -53,6 +53,7 @@ func TestMiddlewareRecordsRequestMetrics(t *testing.T) {
 		`uri="/items/{id}"`,
 		`status="204"`,
 		`outcome="SUCCESS"`,
+		`exception="None"`,
 	} {
 		if !strings.Contains(body, want) {
 			t.Errorf("expected metrics output to contain %q, got:\n%s", want, body)

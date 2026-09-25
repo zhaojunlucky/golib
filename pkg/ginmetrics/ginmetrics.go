@@ -28,6 +28,11 @@ const (
 
 var defaultBuckets = []float64{0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10}
 
+// noException is the "exception" label value used when a request completes
+// without a handler-reported error, mirroring Spring Boot's default of
+// "None" for http_server_requests_seconds.
+const noException = "None"
+
 // Options configures a Metrics instance.
 type Options struct {
 	// Application is the value of the "application" label applied to every
@@ -79,7 +84,7 @@ func New(opts Options) *Metrics {
 			Help:    "Duration of HTTP server requests in seconds.",
 			Buckets: buckets,
 		},
-		[]string{"method", "uri", "status", "outcome"},
+		[]string{"method", "uri", "status", "outcome", "exception"},
 	)
 
 	inFlight := prometheus.NewGaugeVec(
@@ -151,7 +156,7 @@ func (m *Metrics) Middleware() gin.HandlerFunc {
 			status := c.Writer.Status()
 			finalURI := finalURILabel(c, uri)
 			m.requestDuration.
-				WithLabelValues(method, finalURI, strconv.Itoa(status), outcomeLabel(status)).
+				WithLabelValues(method, finalURI, strconv.Itoa(status), outcomeLabel(status), noException).
 				Observe(time.Since(start).Seconds())
 		}()
 
