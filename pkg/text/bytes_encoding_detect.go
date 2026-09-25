@@ -849,7 +849,7 @@ func (detect *BytesEncodingDetect) sjis_probability(rawtext []int) int {
 					row = ((row - 0xb0) << 1) - adjust
 				}
 				row -= 0x20
-				column = 0x20
+				column -= 0x20
 				// System.out.println("original row " + row + " column " +
 				// column);
 				if row < len(detect.JPFreq) && column < len(detect.JPFreq[row]) && detect.JPFreq[row][column] != 0 {
